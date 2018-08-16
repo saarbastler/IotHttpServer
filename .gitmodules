@@ -1,0 +1,3 @@
+[submodule "beast_http_server"]
+	path = beast_http_server
+	url = https://github.com/saarbastler/beast_http_server.git

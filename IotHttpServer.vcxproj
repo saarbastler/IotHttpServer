@@ -165,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="config.h" />
     <ClInclude Include="FileServer.h" />
+    <ClInclude Include="Response.h" />
     <ClInclude Include="SabaException.h" />
     <ClInclude Include="UriParser.h" />
   </ItemGroup>

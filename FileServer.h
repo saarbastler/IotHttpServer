@@ -10,55 +10,7 @@
 #include <server.hpp>
 
 #include "UriParser.h"
-
-// Returns a bad request response
-template<class Request>
-auto bad_request(Request & req, const std::string & why)
-{
-  boost::beast::http::response<boost::beast::http::string_body> res
-  {
-    boost::beast::http::status::bad_request,
-    req.version() };
-
-  res.set(boost::beast::http::field::server, BOOST_BEAST_VERSION_STRING);
-  res.set(boost::beast::http::field::content_type, "text/html");
-  res.keep_alive(req.keep_alive());
-  res.body() = why;
-  res.prepare_payload();
-  return res;
-};
-
-// Returns a not found response
-template<class Request>
-auto not_found(Request & req)
-{
-  boost::beast::http::response<boost::beast::http::string_body> res
-  {
-      boost::beast::http::status::not_found, req.version() };
-
-  res.set(boost::beast::http::field::server, BOOST_BEAST_VERSION_STRING);
-  res.set(boost::beast::http::field::content_type, "text/html");
-  res.keep_alive(req.keep_alive());
-  res.body() = "The resource '" + req.target().to_string() + "' was not found.\n";
-  res.prepare_payload();
-  return res;
-};
-
-// Returns a server error response
-template<class Request>
-auto server_error(Request & req, const boost::beast::string_view & what)
-{
-  boost::beast::http::response<boost::beast::http::string_body> res
-  {
-      boost::beast::http::status::internal_server_error, req.version() };
-
-  res.set(boost::beast::http::field::server, BOOST_BEAST_VERSION_STRING);
-  res.set(boost::beast::http::field::content_type, "text/html");
-  res.keep_alive(req.keep_alive());
-  res.body() = "An error occurred: '" + what.to_string() + "'\n";
-  res.prepare_payload();
-  return res;
-};
+#include "Response.h"
 
 namespace saba
 {
@@ -108,14 +60,14 @@ namespace saba
           {
             std::cout << "not found: " << utf_path << std::endl;
 
-            session.do_write(not_found(req));
+            session.do_write(errorResponseNotFound(req));
           }
           // Handle an unknown error
           else if (ec)
           {
             std::cout << "error opening " << utf_path << " : " << ec << std::endl;
 
-            session.do_write(server_error(req, ec.message()));
+            session.do_write(errorResponse(req, ec.message()));
           }
           else
           {
@@ -138,7 +90,7 @@ namespace saba
         }
         catch (std::exception& ex)
         {
-          session.do_write(bad_request(req, ex.what()));
+          session.do_write( errorResponse(req, ex) );
         }
       }
     };

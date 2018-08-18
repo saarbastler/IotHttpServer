@@ -45,6 +45,8 @@ namespace saba
         for (auto it : tree.get_child(MIMETYPES))
           mimetypes[it.second.get<std::string>(EXTENSION)]= it.second.get<std::string>(TYPE);
 
+        readMore(tree);
+
         for (auto it : tree.get_child(DIRECTORIES))
           directoryCallback(it.second.get<std::string>(URI), it.second.get<std::string>(PATH), it.second.get<std::string>(DEFAULT));
       }
@@ -79,7 +81,9 @@ namespace saba
           return result->second;
       }
 
-    private:
+    protected:
+
+      virtual void readMore(boost::property_tree::ptree& tree) {}
 
       std::string address;
       unsigned port;

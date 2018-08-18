@@ -98,29 +98,29 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\dev\libs\boost_1_68_0\include;.\beast_http_server\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>C:\dev\libs\boost_1_68_0\include;..\beast_http_server\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Tests|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\dev\libs\boost_1_68_0\include;.\beast_http_server\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>C:\dev\libs\boost_1_68_0\include;..\beast_http_server\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\dev\libs\boost_1_68_0\include;.\beast_http_server\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\dev\libs\boost_1_68_0\include;..\beast_http_server\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\dev\libs\boost_1_68_0\lib.x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Tests|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\dev\libs\boost_1_68_0\include;.\beast_http_server\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\dev\libs\boost_1_68_0\include;..\beast_http_server\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\dev\libs\boost_1_68_0\lib.x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\dev\libs\boost_1_68_0\include;.\beast_http_server\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>C:\dev\libs\boost_1_68_0\include;..\beast_http_server\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\dev\libs\boost_1_68_0\include;.\beast_http_server\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>C:\dev\libs\boost_1_68_0\include;..\beast_http_server\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>C:\dev\libs\boost_1_68_0\lib.x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

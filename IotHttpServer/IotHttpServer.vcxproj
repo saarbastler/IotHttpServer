@@ -229,6 +229,7 @@
     <ClCompile Include="tests\TestUriParser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Comma.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="FileServer.h" />
     <ClInclude Include="Response.h" />

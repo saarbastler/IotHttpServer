@@ -226,12 +226,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="IotHttpServer.cpp" />
+    <ClCompile Include="tests\TestMultipartParser.cpp" />
     <ClCompile Include="tests\TestUriParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Comma.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="FileServer.h" />
+    <ClInclude Include="MultipartParser.h" />
     <ClInclude Include="Response.h" />
     <ClInclude Include="SabaException.h" />
     <ClInclude Include="UriParser.h" />

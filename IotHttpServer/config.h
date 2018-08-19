@@ -2,6 +2,8 @@
 #define _INCLUDE_CONFIG_H_
 
 #include <unordered_map>
+#include <ctype.h>
+#include <algorithm>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -29,7 +31,7 @@ namespace saba
     public:
 
       template<class Callback>
-      void read(const std::string& file, Callback& directoryCallback)
+      void read(const std::string& file, Callback directoryCallback)
       {
         boost::property_tree::ptree tree;
 
@@ -69,7 +71,7 @@ namespace saba
       const std::string& operator[] (const boost::filesystem::path& extension)
       {
         std::string utf_ext(boost::locale::conv::utf_to_utf<char>(extension.c_str()));
-        std::transform(utf_ext.begin(), utf_ext.end(), utf_ext.begin(), std::tolower);
+        std::transform(utf_ext.begin(), utf_ext.end(), utf_ext.begin(), tolower);
 
         if (!utf_ext.empty() && utf_ext[0] == '.')
           utf_ext = utf_ext.substr(1);

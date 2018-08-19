@@ -17,7 +17,7 @@ namespace saba
 
       Observable() {}
 
-      Observable(T initial) : value(inital) {}
+      Observable(T initial) : value(initial) {}
 
       typedef std::function<void(const T&)> Observer;
 

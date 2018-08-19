@@ -24,8 +24,8 @@ namespace saba
       std::string defaultFile;
 
     public:
-      FileServer(std::string& path, std::string& defaultFile)
-        : ospath(std::move(path)), defaultFile(std::move(defaultFile))
+      FileServer(const std::string& path, const std::string& defaultFile)
+        : ospath(path), defaultFile(defaultFile)
       { }
 
       ~FileServer()

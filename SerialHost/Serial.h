@@ -68,7 +68,8 @@ private:
     });    
   }
   
-protected:  
+protected:
+
   void send(const char *buffer, int count)
   {
     boost::asio::write( serial, boost::asio::buffer(buffer, count));

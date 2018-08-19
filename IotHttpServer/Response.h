@@ -45,7 +45,7 @@ namespace saba
     template<class Request>
     auto errorResponse(Request& req, const std::exception& ex, boost::beast::http::status status = boost::beast::http::status::bad_request)
     {
-      return errorResponse(req, status, ex.what());
+      return errorResponse(req, ex.what(), status);
     }
 
     template<class Request>

@@ -4,7 +4,10 @@
 #include <sstream>
 #include <server.hpp>
 
+#include <boost/filesystem.hpp>
+
 #include "PlcModel.h"
+#include "PlcConfig.h"
 #include "Comma.h"
 #include "Response.h"
 
@@ -13,7 +16,8 @@ class PlcRestController
 {
 public:
 
-  PlcRestController(http::server& http_server, saba::plc::PlcModel& plcModel) : plcModel(plcModel)
+  PlcRestController(http::server& http_server, saba::plc::PlcModel& plcModel, saba::PlcConfig& config) 
+    : plcModel(plcModel), config(config)
   {
     http_server.get("/api/(inputs|outputs|merker|monoflops)",[this](auto& req, auto& session, auto& arguments)
     {
@@ -42,6 +46,31 @@ public:
         session.do_write(std::move(saba::web::errorResponse(req, ex)));
       }
     });
+
+    http_server.get("/api/uploads", [this](auto& req, auto& session, auto& arguments)
+    {
+      using namespace boost::filesystem;
+
+      try
+      {
+        directory_iterator it(path(this->config.getUploadDir()));
+
+        std::ostringstream out;
+
+        out << '[';
+        Comma comma;
+        for (auto& entry : boost::make_iterator_range(it, {}))
+          out << comma << entry.path().filename();
+          out << ']';
+
+          session.do_write(std::move(saba::web::jsonResponse(req, out.str())));
+      }
+      catch (std::exception& ex)
+      {
+        session.do_write(std::move(saba::web::errorResponse(req, ex)));
+      }
+
+    });
   }
 
 protected:
@@ -63,6 +92,7 @@ protected:
 private:
 
   saba::plc::PlcModel& plcModel;
+  saba::PlcConfig& config;
 };
 
 #endif // !_INCLUDE_PLC_REST_CONTROLLER_H_

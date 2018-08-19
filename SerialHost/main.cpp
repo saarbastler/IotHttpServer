@@ -1,11 +1,14 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 
 #include <boost/filesystem.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <server.hpp>
 
 #include <FileServer.h>
+#include <MultipartParser.h>
 
 #include "PlcConfig.h"
 #include "SerialHost.h"
@@ -40,9 +43,44 @@ int main(int argc, char* argv[])
       });
     });
     
+    my_http_server.post("/upload", [&config](auto& req, auto& session, auto& arguments)
+    {
+      boost::string_view content = req.body();
+
+      try
+      {
+        saba::web::MultipartParser multipartParser(req.body());
+
+        std::cout << "/upload: " << multipartParser.getFilename() << std::endl;
+        std::string now= boost::posix_time::to_iso_string(boost::posix_time::second_clock::local_time())
+          + '_' + multipartParser.getFilename();
+
+        boost::filesystem::path path(config.getUploadDir());
+        path /= now;
+
+        std::ofstream out(path.c_str(), std::ofstream::out | std::ofstream::trunc);
+        if (!out.is_open() || out.bad())
+        {
+          std::string utf_path(boost::locale::conv::utf_to_utf<char>(path.c_str()));
+
+          throw saba::Exception("Unable to open file for write: %s", utf_path.c_str());
+        }
+
+        out.write(multipartParser.getFileStart(), multipartParser.getFilesize());
+        out.close();
+
+        session.do_write(std::move(saba::web::errorResponse(req, "", boost::beast::http::status::ok)));
+      }
+      catch (std::exception& ex)
+      {
+        session.do_write(std::move(saba::web::errorResponse(req, ex)));
+      }
+    });
+
+
     serialHost.open(config.getSerialPort().c_str(), config.getSerialBaudrate());
 
-    PlcRestController plcRestController(my_http_server, plcModel);
+    PlcRestController plcRestController(my_http_server, plcModel, config);
 
     my_http_server.listen(config.getAddress(), boost::lexical_cast<uint32_t>(config.getPort()), [](auto & session) {
       session.do_read();

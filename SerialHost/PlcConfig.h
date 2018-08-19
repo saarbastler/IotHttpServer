@@ -7,6 +7,7 @@ namespace saba
 {
   constexpr const char *SERIAL_PORT = "config.serial.port";
   constexpr const char *SERIAL_BAUDRATE = "config.serial.baudrate";
+  constexpr const char *UPLOAD_DIR = "config.uploaddir";
 
   class PlcConfig : public web::Config
   {
@@ -22,17 +23,23 @@ namespace saba
       return baudrate;
     }
 
+    const std::string& getUploadDir()
+    {
+      return uploaddir;
+    }
+
   protected:
 
     virtual void readMore(boost::property_tree::ptree& tree) 
     {
       port = tree.get<std::string>(SERIAL_PORT);
       baudrate = tree.get<unsigned>(SERIAL_BAUDRATE);
+      uploaddir = tree.get<std::string>(UPLOAD_DIR);
     }
 
     std::string port;
     unsigned baudrate;
-
+    std::string uploaddir;
   };
 }
 

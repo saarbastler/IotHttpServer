@@ -101,4 +101,5 @@
     <port>\\.\COM5</port>
     <baudrate>57600</baudrate>
   </serial>
+  <uploaddir>..\..\upload</uploaddir>
 </config>

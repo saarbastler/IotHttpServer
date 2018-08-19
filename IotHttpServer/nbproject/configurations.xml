@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>Comma.h</itemPath>
       <itemPath>FileServer.h</itemPath>
+      <itemPath>MultipartParser.h</itemPath>
       <itemPath>Response.h</itemPath>
       <itemPath>SabaException.h</itemPath>
       <itemPath>UriParser.h</itemPath>
@@ -70,6 +71,8 @@
       </item>
       <item path="IotHttpServer.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="MultipartParser.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Response.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="SabaException.h" ex="false" tool="3" flavor2="0">
@@ -123,6 +126,8 @@
       <item path="FileServer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="IotHttpServer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MultipartParser.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Response.h" ex="false" tool="3" flavor2="0">
       </item>

@@ -15,17 +15,32 @@ public:
 
   PlcRestController(http::server& http_server, saba::plc::PlcModel& plcModel) : plcModel(plcModel)
   {
-    http_server.get("/api/(inputs|outputs)",[this](auto& req, auto& session, auto& arguments)
+    http_server.get("/api/(inputs|outputs|merker|monoflops)",[this](auto& req, auto& session, auto& arguments)
     {
       using namespace saba::plc;
-
       DataType dataType = DataType::Inputs;
-      if (!arguments.empty() && arguments[0] == "outputs")
-        dataType = DataType::Outputs;
 
-      std::string json = prepareArrayResponse(dataType);
+      try
+      {
+        if (arguments.empty())
+          throw PlcException("missing arguments");
+        else if (arguments[0] == "outputs")
+          dataType = DataType::Outputs;
+        else if (arguments[0] == "merker")
+          dataType = DataType::Merker;
+        else if (arguments[0] == "monoflops")
+          dataType = DataType::Monoflops;
+        else if (arguments[0] != "inputs")
+          throw PlcException("Not found: %s", arguments[0].c_str());
 
-      session.do_write(std::move(saba::web::jsonResponse(req, json)));
+        std::string json = this->prepareArrayResponse(dataType);
+
+        session.do_write(std::move(saba::web::jsonResponse(req, json)));
+      }
+      catch (std::exception& ex)
+      {
+        session.do_write(std::move(saba::web::errorResponse(req, ex)));
+      }
     });
   }
 

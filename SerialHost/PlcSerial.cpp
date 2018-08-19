@@ -62,6 +62,7 @@ void PlcSerial::lineComplete()
         }
       }
     }
+    break;
 
   }
 
@@ -130,7 +131,7 @@ void PlcSerial::fireEvent(Event& event)
 {
   if (!initialized)
   {
-    send("E0\r\n", 4);
+    send("E0\nO\nM\n", 7);
     initialized = true;
   }
 

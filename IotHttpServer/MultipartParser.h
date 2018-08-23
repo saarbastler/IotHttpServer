@@ -72,9 +72,9 @@ namespace saba
 
     protected:
 
-      static constexpr char *ContentDisposition= "Content-Disposition:" ;
-      static constexpr char *FileName = "filename=\"";
-      static constexpr char *ContentType = "Content-Type:";
+      static constexpr const char *ContentDisposition= "Content-Disposition:" ;
+      static constexpr const char *FileName = "filename=\"";
+      static constexpr const char *ContentType = "Content-Type:";
 
       std::string filename;
       std::string contentType;

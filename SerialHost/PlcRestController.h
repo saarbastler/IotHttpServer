@@ -16,10 +16,12 @@
 #include "Response.h"
 #include "Process.h"
 
+// gcc does not find this constant, when this is class constant
+static constexpr const char *Filemacro = "${FILE}";
+
 class PlcRestController
 {
 public:
-  static constexpr const char *Filemacro = "${FILE}";
 
   PlcRestController(boost::asio::io_service& ios, http::server& http_server, saba::plc::PlcModel& plcModel
     , saba::PlcConfig& config, SerialHost& serialHost)

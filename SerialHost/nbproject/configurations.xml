@@ -63,6 +63,8 @@
             <linkerOptionItem>-lboost_filesystem</linkerOptionItem>
             <linkerOptionItem>-lboost_thread</linkerOptionItem>
             <linkerOptionItem>-lboost_regex</linkerOptionItem>
+            <linkerOptionItem>-lboost_regex</linkerOptionItem>
+            <linkerOptionItem>-lboost_date_time</linkerOptionItem>
             <linkerOptionItem>-lpthread</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>

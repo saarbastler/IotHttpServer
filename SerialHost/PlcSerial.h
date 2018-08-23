@@ -24,6 +24,12 @@ public:
     listener.back() = eventListener;
   }
 
+  void close()
+  {
+    listener.clear();
+    Serial::close();
+  }
+
 protected:
 
   virtual void dataReceived(const char *buffer, unsigned count);

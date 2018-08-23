@@ -82,3 +82,4 @@ x64/
 **/nbdist/
 .nb-gradle/
 
+BoostTests/*

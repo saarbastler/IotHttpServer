@@ -5,9 +5,17 @@
 
 #include <iostream>
 
-void SerialHost::open(const char *comPort, unsigned baudrate)
+void SerialHost::open(const char *comPort, unsigned baudrate_)
 {
-  serial.open(comPort, baudrate);
+  port = comPort;
+  baudrate = baudrate_;
+
+  reopen();
+}
+
+void SerialHost::reopen()
+{
+  serial.open(port.c_str(), baudrate);
   serial.addEventListener(std::bind(&SerialHost::eventListener, this, std::placeholders::_1));
 }
 

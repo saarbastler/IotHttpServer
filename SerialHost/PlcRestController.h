@@ -3,21 +3,27 @@
 
 #include <sstream>
 #include <server.hpp>
+#include <thread>
+#include <chrono>
 
 #include <boost/filesystem.hpp>
+#include <boost/asio.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "PlcModel.h"
 #include "PlcConfig.h"
 #include "Comma.h"
 #include "Response.h"
-
+#include "Process.h"
 
 class PlcRestController
 {
 public:
+  static constexpr const char *Filemacro = "${FILE}";
 
-  PlcRestController(http::server& http_server, saba::plc::PlcModel& plcModel, saba::PlcConfig& config) 
-    : plcModel(plcModel), config(config)
+  PlcRestController(boost::asio::io_service& ios, http::server& http_server, saba::plc::PlcModel& plcModel
+    , saba::PlcConfig& config, SerialHost& serialHost)
+    : plcModel(plcModel), config(config), avrdude(ios), serialHost(serialHost)
   {
     http_server.get("/api/(inputs|outputs|merker|monoflops)",[this](auto& req, auto& session, auto& arguments)
     {
@@ -69,7 +75,79 @@ public:
       {
         session.do_write(std::move(saba::web::errorResponse(req, ex)));
       }
+    });
 
+    http_server.post("/api/upload", [&config](auto& req, auto& session, auto& arguments)
+    {
+      boost::string_view content = req.body();
+
+      try
+      {
+        saba::web::MultipartParser multipartParser(req.body());
+
+        std::string now = boost::posix_time::to_iso_string(boost::posix_time::second_clock::local_time())
+          + '_' + multipartParser.getFilename();
+
+        boost::filesystem::path path(config.getUploadDir());
+        path /= now;
+
+        std::ofstream out(path.c_str(), std::ofstream::out | std::ofstream::trunc);
+        if (!out.is_open() || out.bad())
+        {
+          std::string utf_path(boost::locale::conv::utf_to_utf<char>(path.c_str()));
+
+          throw saba::Exception("Unable to open file for write: %s", utf_path.c_str());
+        }
+
+        out.write(multipartParser.getFileStart(), multipartParser.getFilesize());
+        out.close();
+
+        session.do_write(std::move(saba::web::errorResponse(req, "", boost::beast::http::status::ok)));
+      }
+      catch (std::exception& ex)
+      {
+        session.do_write(std::move(saba::web::errorResponse(req, ex)));
+      }
+    });
+
+    http_server.get("/api/flash/(.*)", [this](auto& req, auto& session, auto& arguments)
+    {
+      using namespace boost::filesystem;
+
+      try
+      {
+        if (this->avrdude.isRunning())
+          throw PlcException("AvrDude Process is still running.");
+
+        if (arguments.size() != 1)
+          throw PlcException("missing arguments");
+
+        path path(this->config.getUploadDir());
+        path /= arguments[0];
+        if(!is_regular_file(status(path)))
+          throw PlcException("File does not exist: %s", arguments[0].c_str());
+
+        this->serialHost.close();
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        std::string commandline = this->config.getAvrdude();
+        std::string utf_path(boost::locale::conv::utf_to_utf<char>(path.c_str()));
+        auto it = commandline.find(Filemacro);
+        if (it != std::string::npos)
+          boost::algorithm::replace_all(commandline, Filemacro, utf_path);
+
+        // serialHost or this captured is not working, the captured value is invalid
+        this->avrdude.startProcess(session.getConnection(), commandline, [](void *arg)
+        {
+          SerialHost *pserialHost = static_cast<SerialHost*>(arg);
+          pserialHost->reopen();
+        }, &this->serialHost);
+
+      }
+      catch (std::exception& ex)
+      {
+        session.do_write(std::move(saba::web::errorResponse(req, ex)));
+      }
     });
   }
 
@@ -93,6 +171,8 @@ private:
 
   saba::plc::PlcModel& plcModel;
   saba::PlcConfig& config;
+  Process avrdude;
+  SerialHost& serialHost;
 };
 
 #endif // !_INCLUDE_PLC_REST_CONTROLLER_H_

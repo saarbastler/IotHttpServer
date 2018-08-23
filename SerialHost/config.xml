@@ -102,4 +102,5 @@
     <baudrate>57600</baudrate>
   </serial>
   <uploaddir>..\..\upload</uploaddir>
+  <avrdude>C:\\Tools\\avrdude6.3\\avrdude.exe -CC:\\Tools\\avrdude6.3\\avrdude328pb.conf -v -pm328p -carduino -PCOM5 -b115200 -D -Uflash:w:${FILE}:i</avrdude>
 </config>

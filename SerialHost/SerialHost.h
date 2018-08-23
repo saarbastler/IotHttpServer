@@ -22,6 +22,7 @@ public:
   }
 
   void open(const char *comPort, unsigned baudrate);
+  void reopen();
 
   void close();
 
@@ -31,6 +32,9 @@ private:
 
   PlcSerial serial;
   saba::plc::PlcModel& plcModel;
+
+  std::string port;
+  unsigned baudrate;
 };
 
 #endif // _INCLUDE_SERIAL_HOST_H_

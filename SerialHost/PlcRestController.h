@@ -27,23 +27,23 @@ public:
     , saba::PlcConfig& config, SerialHost& serialHost)
     : plcModel(plcModel), config(config), avrdude(ios), serialHost(serialHost)
   {
-    http_server.get("/api/(inputs|outputs|merker|monoflops)",[this](auto& req, auto& session, auto& arguments)
+    http_server.param<std::string>().get("/api/(inputs|outputs|merker|monoflops)",[this](auto& req, auto& session, auto& args)
     {
       using namespace saba::plc;
       DataType dataType = DataType::Inputs;
 
       try
       {
-        if (arguments.empty())
+        /*if (arguments.empty())
           throw PlcException("missing arguments");
-        else if (arguments[0] == "outputs")
+        else*/ if (args._1 == "outputs")
           dataType = DataType::Outputs;
-        else if (arguments[0] == "merker")
+        else if (args._1 == "merker")
           dataType = DataType::Merker;
-        else if (arguments[0] == "monoflops")
+        else if (args._1 == "monoflops")
           dataType = DataType::Monoflops;
-        else if (arguments[0] != "inputs")
-          throw PlcException("Not found: %s", arguments[0].c_str());
+        else if (args._1 != "inputs")
+          throw PlcException("Not found: %s", args._1.c_str());
 
         std::string json = this->prepareArrayResponse(dataType);
 
@@ -55,7 +55,7 @@ public:
       }
     });
 
-    http_server.get("/api/uploads", [this](auto& req, auto& session, auto& arguments)
+    http_server.get("/api/uploads", [this](auto& req, auto& session)
     {
       using namespace boost::filesystem;
 
@@ -79,7 +79,7 @@ public:
       }
     });
 
-    http_server.post("/api/upload", [&config](auto& req, auto& session, auto& arguments)
+    http_server.post("/api/upload", [&config](auto& req, auto& session)
     {
       boost::string_view content = req.body();
 
@@ -112,7 +112,7 @@ public:
       }
     });
 
-    http_server.get("/api/flash/(.*)", [this](auto& req, auto& session, auto& arguments)
+    http_server.param<std::string>().get("/api/flash/(.*)", [this](auto& req, auto& session, auto& args)
     {
       using namespace boost::filesystem;
 
@@ -121,13 +121,14 @@ public:
         if (this->avrdude.isRunning())
           throw PlcException("AvrDude Process is still running.");
 
-        if (arguments.size() != 1)
-          throw PlcException("missing arguments");
+        //if (arguments.size() != 1)
+        //  throw PlcException("missing arguments");
 
         path path(this->config.getUploadDir());
-        path /= arguments[0];
+        //path /= arguments[0];
+        path /= args._1;
         if(!is_regular_file(status(path)))
-          throw PlcException("File does not exist: %s", arguments[0].c_str());
+          throw PlcException("File does not exist: %s", args._1.c_str());
 
         this->serialHost.close();
         std::this_thread::sleep_for(std::chrono::milliseconds(500));

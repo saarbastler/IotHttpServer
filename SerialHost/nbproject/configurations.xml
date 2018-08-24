@@ -53,6 +53,7 @@
             <pElem>../IotHttpServer</pElem>
             <pElem>/home/pi/boost_1_68_0</pElem>
           </incDir>
+          <warningLevel>0</warningLevel>
         </ccTool>
         <linkerTool>
           <linkerAddLib>

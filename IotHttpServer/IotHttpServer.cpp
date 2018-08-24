@@ -32,13 +32,13 @@ int main(int argc, char* argv[])
     {
       auto fileServer = std::make_shared<saba::web::FileServer>(path, defaultFile);
 
-      my_http_server.get(uri, [fileServer, &config](auto& req, auto& session, auto& arguments)
+      my_http_server.get(uri, [fileServer, &config](auto& req, auto& session)
       {
         fileServer->serve(req, session, config);
       });
     });
 
-    my_http_server.post("/upload", [](auto& req, auto& session, auto& arguments)
+    my_http_server.post("/upload", [](auto& req, auto& session)
     {
       boost::string_view content = req.body();
       std::cout << "/upload" << std::endl << content << std::endl;

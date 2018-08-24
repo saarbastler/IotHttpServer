@@ -48,10 +48,6 @@ public:
         handler(argument);
       },
         commandline,
-        /*"C:\\Tools\\avrdude6.3\\avrdude.exe "
-        "-CC:\\Tools\\avrdude6.3\\avrdude328pb.conf "
-        "-v " "-pm328p " "-carduino " "-PCOM5 " "-b115200 " "-D "
-        "-Uflash:w:C:\\HardwareProjekte\\Haus\\AussenBeleuchtung\\Firmware\\Aussenbeleuchtung\\Release\\Aussenbeleuchtung.hex:i",*/
         boost::process::std_out > boost::process::null,
         boost::process::std_err > *pipe
         );

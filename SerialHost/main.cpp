@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     {
       auto fileServer = std::make_shared<saba::web::FileServer>(path, defaultFile);
 
-      my_http_server.get(uri, [fileServer, &config](auto& req, auto& session, auto& arguments)
+      my_http_server.get(uri, [fileServer, &config](auto& req, auto& session)
       {
         fileServer->serve(req, session, config);
       });
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 
     PlcRestController plcRestController(*http::base::processor::get().io_service(), my_http_server, plcModel, config, serialHost);
 
-    my_http_server.all(".*", [](auto& req, auto& session, auto& arguments)
+    my_http_server.all(".*", [](auto& req, auto& session)
     {
       session.do_write(std::move(saba::web::errorResponse(req,boost::beast::http::status::not_found, "Resource not found")));
     });

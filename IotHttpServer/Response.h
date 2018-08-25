@@ -20,6 +20,7 @@ namespace saba
 
       res.set(boost::beast::http::field::server, BOOST_BEAST_VERSION_STRING);
       res.set(boost::beast::http::field::content_type, "application/json");
+      res.set("Access-Control-Allow-Origin", "*");
       res.keep_alive(req.keep_alive());
       res.body() = jsonText;
       res.prepare_payload();

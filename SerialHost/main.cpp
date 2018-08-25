@@ -53,6 +53,17 @@ int main(int argc, char* argv[])
 
     PlcRestController plcRestController(*http::base::processor::get().io_service(), my_http_server, plcModel, config, serialHost);
 
+    my_http_server.options(".*", [](auto& req, auto& session)
+    {
+      boost::beast::http::response<boost::beast::http::string_body> res{ boost::beast::http::status::ok, req.version() };
+
+      res.set(boost::beast::http::field::server, BOOST_BEAST_VERSION_STRING);
+      res.set("Access-Control-Allow-Origin", "*");
+      res.keep_alive(req.keep_alive());
+      res.prepare_payload();
+
+      session.do_write(std::move(res));
+    });
     my_http_server.all(".*", [](auto& req, auto& session)
     {
       session.do_write(std::move(saba::web::errorResponse(req,boost::beast::http::status::not_found, "Resource not found")));

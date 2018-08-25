@@ -36,7 +36,7 @@ namespace saba
       template<class Request, class Session, class Mimetype>
       void serve(Request& req, Session& session, Mimetype& mimetype)
       {
-        std::cout << req.method_string() << ":" << req.target() << " ";
+        //std::cout << req.method_string() << ":" << req.target() << " ";
 
         try
         {
@@ -73,7 +73,7 @@ namespace saba
           {
             auto const body_size = body.size();
 
-            std::cout << "serving " << utf_path << " size: " << body_size << std::endl;
+            std::cout << "serving " << relpath << " size: " << body_size << std::endl;
 
             boost::beast::http::response<boost::beast::http::file_body> res{
                 std::piecewise_construct,

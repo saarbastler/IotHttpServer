@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-  <address>127.0.0.1</address>
+  <address>0.0.0.0</address>
   <port>80</port>
   <threads>1</threads>
   <mimetypes>
@@ -93,7 +93,8 @@
   <directories>
     <directory>
       <uri>^(?!/api).*</uri>
-      <path>.\www</path>
+      <!--<path>.\www</path>-->
+      <path>C:\HardwareProjekte\Haus\AussenBeleuchtung\www\aussenlicht\dist\aussenlicht</path>
       <default>index.html</default>
     </directory>
   </directories>
@@ -101,6 +102,6 @@
     <port>\\.\COM5</port>
     <baudrate>57600</baudrate>
   </serial>
-  <uploaddir>..\..\upload</uploaddir>
-  <avrdude>C:\\Tools\\avrdude6.3\\avrdude.exe -CC:\\Tools\\avrdude6.3\\avrdude328pb.conf -v -pm328p -carduino -PCOM5 -b115200 -D -Uflash:w:${FILE}:i</avrdude>
+  <uploaddir>C:\HardwareProjekte\Haus\upload</uploaddir>
+  <avrdude>C:\Tools\avrdude6.3\avrdude.exe -CC:\Tools\avrdude6.3\avrdude328pb.conf -v -pm328p -carduino -PCOM5 -b115200 -D -Uflash:w:${FILE}:i</avrdude>
 </config>

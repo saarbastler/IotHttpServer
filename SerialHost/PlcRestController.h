@@ -55,7 +55,7 @@ public:
       }
     });
 
-    http_server.get("/api/uploads", [this](auto& req, auto& session)
+    http_server.get("/api/uploads/?", [this](auto& req, auto& session)
     {
       using namespace boost::filesystem;
 
@@ -79,7 +79,7 @@ public:
       }
     });
 
-    http_server.post("/api/upload", [&config](auto& req, auto& session)
+    http_server.post("/api/upload/?", [&config](auto& req, auto& session)
     {
       boost::string_view content = req.body();
 
@@ -112,6 +112,26 @@ public:
       }
     });
 
+    http_server.param<std::string>().delete_("/api/upload/(.*)", [this](auto& req, auto& session, auto& args)
+    {
+      using namespace boost::filesystem;
+      try
+      {
+        path path(this->config.getUploadDir());
+        path /= args._1;
+        if (!is_regular_file(status(path)))
+          throw PlcException("File does not exist: %s", args._1.c_str());
+
+        remove(path);
+
+        session.do_write(std::move(saba::web::errorResponse(req, "", boost::beast::http::status::no_content)));
+      }
+      catch (std::exception& ex)
+      {
+        session.do_write(std::move(saba::web::errorResponse(req, ex, boost::beast::http::status::not_found)));
+      }
+    });
+
     http_server.param<std::string>().get("/api/flash/(.*)", [this](auto& req, auto& session, auto& args)
     {
       using namespace boost::filesystem;
@@ -121,11 +141,7 @@ public:
         if (this->avrdude.isRunning())
           throw PlcException("AvrDude Process is still running.");
 
-        //if (arguments.size() != 1)
-        //  throw PlcException("missing arguments");
-
         path path(this->config.getUploadDir());
-        //path /= arguments[0];
         path /= args._1;
         if(!is_regular_file(status(path)))
           throw PlcException("File does not exist: %s", args._1.c_str());

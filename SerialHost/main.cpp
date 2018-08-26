@@ -59,6 +59,7 @@ int main(int argc, char* argv[])
 
       res.set(boost::beast::http::field::server, BOOST_BEAST_VERSION_STRING);
       res.set("Access-Control-Allow-Origin", "*");
+      res.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
       res.keep_alive(req.keep_alive());
       res.prepare_payload();
 

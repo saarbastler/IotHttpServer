@@ -93,7 +93,7 @@
   <directories>
     <directory>
       <uri>^(?!/api).*</uri>
-      <!--<path>.\www</path>-->
+      <!--path>.\www</path-->
       <path>C:\HardwareProjekte\Haus\AussenBeleuchtung\www\aussenlicht\dist\aussenlicht</path>
       <default>index.html</default>
     </directory>

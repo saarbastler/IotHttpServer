@@ -14,7 +14,7 @@ class SerialHost
 public:
   static constexpr unsigned NUMBER_OF_INPUTS =  8;
 
-  SerialHost(saba::plc::PlcModel& plcModel, std::shared_ptr<boost::asio::io_service> ios) : plcModel(plcModel), serial(ios, 80) {}
+  SerialHost(saba::plc::PlcModel& plcModel, boost::asio::io_service& ios) : plcModel(plcModel), serial(ios, 80) {}
 
   ~SerialHost()
   {

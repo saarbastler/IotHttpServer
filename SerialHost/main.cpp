@@ -47,11 +47,11 @@ int main(int argc, char* argv[])
     });
         
 
-    Process proc(*http::base::processor::get().io_service());
+    Process proc(http::base::processor::get().io_service());
 
     serialHost.open(config.getSerialPort().c_str(), config.getSerialBaudrate());
 
-    PlcRestController plcRestController(*http::base::processor::get().io_service(), my_http_server, plcModel, config, serialHost);
+    PlcRestController plcRestController(http::base::processor::get().io_service(), my_http_server, plcModel, config, serialHost);
 
     my_http_server.options(".*", [](auto& req, auto& session)
     {

@@ -23,7 +23,7 @@
 class Serial
 {
 public:
-  Serial(std::shared_ptr<boost::asio::io_service> io, unsigned bufferSize) : serial(*io), readMem(bufferSize)
+  Serial(boost::asio::io_service& io, unsigned bufferSize) : serial(io), readMem(bufferSize)
   {
   }
   

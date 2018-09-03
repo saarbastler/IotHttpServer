@@ -27,7 +27,7 @@ public:
     , saba::PlcConfig& config, SerialHost& serialHost)
     : plcModel(plcModel), config(config), avrdude(ios), serialHost(serialHost)
   {
-    http_server.param<std::string>().get("/api/(inputs|outputs|merker|monoflops)",[this](auto& req, auto& session, auto& args)
+    http_server.param<std::string>().get("/api/(inputs|outputs|merker|monoflops)/?",[this](auto& req, auto& session, auto& args)
     {
       using namespace saba::plc;
       DataType dataType = DataType::Inputs;

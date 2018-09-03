@@ -20,7 +20,7 @@ public:
   }
 
   template<class Callback>
-  void startProcess(std::shared_ptr<http::base::tcp_connection> connection, const std::string& commandline, 
+  void startProcess(std::shared_ptr<http::base::connection> connection, const std::string& commandline,
     const Callback& handler, void* arg= nullptr)
   {
     if (!running)
@@ -68,7 +68,7 @@ protected:
   {
     if (!error && bytes_transferred)
     {
-      tcpConnection->socket().async_write_some(boost::asio::buffer(buffer, bytes_transferred), 
+      tcpConnection->stream().async_write_some(boost::asio::buffer(buffer, bytes_transferred), 
         [this](const boost::system::error_code& error,
         std::size_t bytes_transferred)
       {
@@ -100,7 +100,7 @@ private:
 
   boost::asio::io_service& ios;
   std::shared_ptr<boost::process::async_pipe> pipe;
-  std::shared_ptr<http::base::tcp_connection> tcpConnection;
+  std::shared_ptr<http::base::connection> tcpConnection;
 
   void *argument = nullptr;
   volatile bool running = false;

@@ -12,7 +12,7 @@ class PlcSerial :  public Serial
 public:
   static constexpr unsigned BUFFER_SIZE = 80;
 
-  PlcSerial(std::shared_ptr<boost::asio::io_service> io, unsigned bufferSize) : Serial(io, bufferSize) {}
+  PlcSerial(boost::asio::io_service& io, unsigned bufferSize) : Serial(io, bufferSize) {}
 
   virtual ~PlcSerial() {}
 

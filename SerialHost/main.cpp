@@ -74,6 +74,22 @@ int main(int argc, char* argv[])
       session.do_read();
     });
 
+    plcModel.addListObserver([&my_http_server](saba::plc::DataType dataType, unsigned index, bool value)
+    {
+      std::ostringstream out;
+      out << "{ \"type\":\"" << saba::plc::DataTypeNames[int(dataType)] << "\",\"index\":" << index << ",\"value\":" << (value ? "true" : "false") << "}";
+
+      my_http_server.websockets()->sendToAll(out.str());
+    });
+
+    /*plcModel.get(saba::plc::DataType::Outputs, 0).addObserver([&my_http_server](const bool& value)
+    {
+      std::ostringstream out;
+      out << "{ \"type\":\"output\",\"index\":" << 0 << ",\"value\":" << (value ? "true" : "false") << "}";
+
+      my_http_server.websockets()->sendToAll(out.str());
+    });*/
+
     //##################################################################
 
     std::cout << "Server starting on " << config.getAddress() << ':' << config.getPort() << std::endl;

@@ -19,7 +19,7 @@ namespace saba
 
       Observable(T initial) : value(initial) {}
 
-      typedef std::function<void(const T&)> Observer;
+      using Observer= std::function<void(const T&)>;
 
       T get() const
       {
@@ -33,10 +33,10 @@ namespace saba
           it(value);
       }
 
-      void addObserver(Observer& o)
+      void addObserver(Observer&& o)
       {
         observerList.emplace_back();
-        observerList.back() = o;
+        observerList.back() = std::move(o);
       }
 
     private:
@@ -52,11 +52,14 @@ namespace saba
       Inputs, Outputs, Merker, Monoflops
     };
 
+    constexpr const char *DataTypeNames[] = { "input","output","merker","monoflop" };
+
     class PlcModel
     {
     public:
 
       using ObservableList = std::vector<Observable<bool>>;
+      using ListObserver = std::function<void(DataType,unsigned,bool)>;
 
       PlcModel()
       {
@@ -72,9 +75,11 @@ namespace saba
           throw PlcException("index %d for type %d out of size", index, dataType);
 
         list[index].set(value);
+        for (auto it = listObserver.begin(); it != listObserver.end(); it++)
+          (*it)(dataType, index, value);
       }
 
-      Observable<bool> get(DataType dataType, unsigned index)
+      Observable<bool>& get(DataType dataType, unsigned index)
       {
         return observed[static_cast<unsigned>(dataType)][index];
       }
@@ -84,9 +89,15 @@ namespace saba
         return observed[static_cast<unsigned>(dataType)];
       }
 
+      void addListObserver(ListObserver&& o)
+      {
+        listObserver.emplace_back(std::move(o));
+      }
+
     private:
 
       std::array<ObservableList, 4> observed;
+      std::vector<ListObserver> listObserver;
     };
   }
 }

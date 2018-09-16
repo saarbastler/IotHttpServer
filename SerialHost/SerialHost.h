@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <thread>
+#include <sstream>
+#include <iostream>
 
 #include <boost/asio/deadline_timer.hpp>
 
@@ -25,6 +27,24 @@ public:
   void reopen();
 
   void close();
+
+  void monoflop(unsigned channel, bool on)
+  {
+    std::ostringstream out;
+    out << 'M' << channel << (on ? 'S' : 'R') << "\r\n";
+
+    std::cout << "<|" << out.str();
+    serial.send(out.str().c_str(), int(out.str().length()));
+  }
+
+  void monoflopTime(unsigned channel, uint16_t time)
+  {
+    std::ostringstream out;
+    out << 'M' << channel << 'T' << time << "\r\n";
+
+    std::cout << "<|" << out.str();
+    serial.send(out.str().c_str(), int(out.str().length()));
+  }
 
 private:
 

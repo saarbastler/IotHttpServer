@@ -55,6 +55,11 @@ public:
     serial.close();
   }
 
+  void send(const char *buffer, int count)
+  {
+    boost::asio::write( serial, boost::asio::buffer(buffer, count));
+  }
+  
 private:
   
   void readAsync()
@@ -70,11 +75,6 @@ private:
   
 protected:
 
-  void send(const char *buffer, int count)
-  {
-    boost::asio::write( serial, boost::asio::buffer(buffer, count));
-  }
-  
   virtual void dataReceived(const char *buffer, unsigned count) = 0;
 
   virtual void successfulOpened()

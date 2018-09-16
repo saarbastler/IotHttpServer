@@ -55,6 +55,30 @@ public:
       }
     });
 
+    http_server.param<unsigned>().post("/api/monoflops/set/(\\d+)/?"
+      , [this](auto& req, auto& session, auto& args)
+    {
+      this->serialHost.monoflop(args._1, true);
+
+      session.do_write(std::move(saba::web::errorResponse(req, "", boost::beast::http::status::ok)));
+    });
+
+    http_server.param<unsigned>().post("/api/monoflops/reset/(\\d+)/?"
+      , [this](auto& req, auto& session, auto& args)
+    {
+      this->serialHost.monoflop(args._1, false);
+
+      session.do_write(std::move(saba::web::errorResponse(req, "", boost::beast::http::status::ok)));
+    });
+
+    http_server.param<unsigned,uint16_t>().post("/api/monoflops/time/(\\d+)/(\\d+)/?"
+      , [this](auto& req, auto& session, auto& args)
+    {
+      this->serialHost.monoflopTime(args._1, args._2);
+
+      session.do_write(std::move(saba::web::errorResponse(req, "", boost::beast::http::status::ok)));
+    });
+
     http_server.get("/api/uploads/?", [this](auto& req, auto& session)
     {
       using namespace boost::filesystem;

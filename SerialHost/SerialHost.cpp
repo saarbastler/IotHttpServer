@@ -35,8 +35,10 @@ void SerialHost::eventListener(Event& event)
   if( event.getEventType() != EventType::Error)
     try
     {
-    DataType dataType = typeIndexFromEventType[static_cast<unsigned>(event.getEventType()) - 1];
-      if (ValueEvent *valueEvent = dynamic_cast<ValueEvent*>(&event))
+      DataType dataType = typeIndexFromEventType[static_cast<unsigned>(event.getEventType()) - 1];
+      if (EventMonoflop *monofopEvent = dynamic_cast<EventMonoflop*>(&event))
+        plcModel.setMonoflop(monofopEvent->getNum(), monofopEvent->getValue(), monofopEvent->getDuration(), monofopEvent->getRemaining());
+      else if (ValueEvent *valueEvent = dynamic_cast<ValueEvent*>(&event))
         plcModel.set(dataType, valueEvent->getNum(), valueEvent->getValue());
     }
     catch (std::exception& ex)

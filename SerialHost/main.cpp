@@ -81,14 +81,15 @@ int main(int argc, char* argv[])
 
       my_http_server.websockets()->sendToAll(out.str());
     });
-
-    /*plcModel.get(saba::plc::DataType::Outputs, 0).addObserver([&my_http_server](const bool& value)
+    plcModel.addMonoflopObserver([&my_http_server](unsigned index, bool value, unsigned duration, unsigned remaining)
     {
       std::ostringstream out;
-      out << "{ \"type\":\"output\",\"index\":" << 0 << ",\"value\":" << (value ? "true" : "false") << "}";
+      out << "{ \"type\":\"monoflop\",\"index\":" << index << ",\"value\":" << (value ? "true" : "false") 
+        << ",\"duration\":" << duration << ",\"remaining\":" << remaining << "}";
 
       my_http_server.websockets()->sendToAll(out.str());
-    });*/
+    });
+
 
     //##################################################################
 

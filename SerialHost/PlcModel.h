@@ -44,7 +44,95 @@ namespace saba
       T value;
 
       std::vector<Observer> observerList;
+    };
 
+    template<typename T,typename U>
+    class Observable2
+    {
+    public:
+      Observable2() {}
+
+      Observable2(T t, U u) : t(t), u(u) {}
+
+      using Observer = std::function<void(const T&,const U&)>;
+
+      T getFirst() const
+      {
+        return t;
+      }
+
+      U getSecond() const
+      {
+        return u;
+      }
+
+      void set(T t_, U u_)
+      {
+        t = t_;
+        u = u_;
+        for (auto it : observerList)
+          it(t, u);
+      }
+
+      void addObserver(Observer&& o)
+      {
+        observerList.emplace_back(std::move(o));
+      }
+
+    private:
+
+      T t;
+      U u;
+
+      std::vector<Observer> observerList;
+    };
+
+    template<typename T, typename U, typename V>
+    class Observable3
+    {
+    public:
+      Observable3() {}
+
+      Observable3(T t, U u, V v) : t(t), u(u), v(v) {}
+
+      using Observer = std::function<void(const T&, const U&, const V&)>;
+
+      T getFirst() const
+      {
+        return t;
+      }
+
+      U getSecond() const
+      {
+        return u;
+      }
+
+      V getThird() const
+      {
+        return v;
+      }
+
+      void set(T t_, U u_, V v_)
+      {
+        t = t_;
+        u = u_;
+        v = v_;
+        for (auto it : observerList)
+          it(t, u, v);
+      }
+
+      void addObserver(Observer&& o)
+      {
+        observerList.emplace_back(std::move(o));
+      }
+
+    private:
+
+      T t;
+      U u;
+      V v;
+
+      std::vector<Observer> observerList;
     };
 
     enum class DataType
@@ -58,17 +146,23 @@ namespace saba
     {
     public:
 
-      using ObservableList = std::vector<Observable<bool>>;
+      using ObservableList = std::vector<Observable<bool>>;      
       using ListObserver = std::function<void(DataType,unsigned,bool)>;
+      using MonoflopObserver = std::function<void(unsigned,bool,unsigned,unsigned)>;
 
       PlcModel()
       {
         for (auto& it : observed)
           it.resize(8);
+
+        observedMonoflops.resize(8);
       }
 
       void set(DataType dataType, unsigned index, bool value)
       {
+        if (dataType == DataType::Monoflops)
+          throw PlcException("use setMonoflop for Monoflop DataType");
+
         ObservableList& list = observed[static_cast<unsigned>(dataType)];
 
         if (index >= list.size())
@@ -77,6 +171,16 @@ namespace saba
         list[index].set(value);
         for (auto it = listObserver.begin(); it != listObserver.end(); it++)
           (*it)(dataType, index, value);
+      }
+
+      void setMonoflop(unsigned index, bool value, unsigned duration, unsigned remaining)
+      {
+        if (index >= observedMonoflops.size())
+          throw PlcException("index %d for type Monoflop out of size", index);
+
+        observedMonoflops[index].set(value, duration, remaining);
+        for (auto& it : monoflopObserver)
+          it(index, value, duration, remaining);
       }
 
       Observable<bool>& get(DataType dataType, unsigned index)
@@ -94,10 +198,18 @@ namespace saba
         listObserver.emplace_back(std::move(o));
       }
 
+      void addMonoflopObserver(MonoflopObserver&& o)
+      {
+        monoflopObserver.emplace_back(std::move(o));
+      }
+
     private:
 
-      std::array<ObservableList, 4> observed;
+      std::array<ObservableList, 3> observed;
       std::vector<ListObserver> listObserver;
+
+      std::vector<Observable3<bool,unsigned,unsigned>> observedMonoflops;
+      std::vector<MonoflopObserver> monoflopObserver;
     };
   }
 }

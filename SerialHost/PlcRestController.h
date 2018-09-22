@@ -16,6 +16,23 @@
 #include "Response.h"
 #include "Process.h"
 
+std::ostream& operator << (std::ostream& out, const saba::plc::Observable<bool>& io)
+{
+  out << (io() ? '1' : '0');
+
+  return out;
+}
+
+std::ostream& operator << (std::ostream& out, const saba::plc::Observable3<bool, unsigned, unsigned>& mf)
+{
+  out << "{\"value\":" << (mf.getFirst() ? '1' : '0')
+    << ",\"duration\":" << mf.getSecond()
+    << ",\"remaining\":" << mf.getThird()
+    << "}";
+
+  return out;
+}
+
 // gcc does not find this constant, when this is class constant
 static constexpr const char *Filemacro = "${FILE}";
 
@@ -196,18 +213,26 @@ public:
 
 protected:
 
-  std::string prepareArrayResponse(saba::plc::DataType dataType)
+  template<class T>
+  std::string prepareResponse(const std::vector<T>& list)
   {
-    auto list = plcModel.getList(dataType);
     std::ostringstream out;
 
     out << '[';
     Comma comma;
     for (auto it = list.begin(); it != list.end(); it++)
-      out << comma << (it->get() ? '1' : '0');
+      out << comma << *it;
     out << ']';
 
     return std::move(out.str());
+  }
+
+  std::string prepareArrayResponse(saba::plc::DataType dataType)
+  {
+    if (dataType == saba::plc::DataType::Monoflops)
+      return prepareResponse(plcModel.getMonoflopList());
+    else
+      return prepareResponse(plcModel.getList(dataType));
   }
 
 private:

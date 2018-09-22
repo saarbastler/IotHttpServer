@@ -37,7 +37,7 @@ public:
       {
         std::cout << "ExitHandler : " << ec << " :" << code << std::endl;
 
-        tcpConnection->shutdown();
+        tcpConnection->shutdown(boost::asio::ip::tcp::socket::shutdown_type::shutdown_both);
         tcpConnection.reset();
 
         pipe->close();

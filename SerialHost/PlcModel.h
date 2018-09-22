@@ -21,6 +21,11 @@ namespace saba
 
       using Observer= std::function<void(const T&)>;
 
+      T operator () () const
+      {
+        return get();
+      }
+
       T get() const
       {
         return value;
@@ -55,6 +60,11 @@ namespace saba
       Observable2(T t, U u) : t(t), u(u) {}
 
       using Observer = std::function<void(const T&,const U&)>;
+
+      T operator() () const
+      {
+        return getFirst();
+      }
 
       T getFirst() const
       {
@@ -96,6 +106,11 @@ namespace saba
       Observable3(T t, U u, V v) : t(t), u(u), v(v) {}
 
       using Observer = std::function<void(const T&, const U&, const V&)>;
+
+      T operator() () const
+      {
+        return getFirst();
+      }
 
       T getFirst() const
       {
@@ -148,6 +163,7 @@ namespace saba
 
       using ObservableList = std::vector<Observable<bool>>;      
       using ListObserver = std::function<void(DataType,unsigned,bool)>;
+      using MonoflopList = std::vector<Observable3<bool, unsigned, unsigned>>;
       using MonoflopObserver = std::function<void(unsigned,bool,unsigned,unsigned)>;
 
       PlcModel()
@@ -193,6 +209,11 @@ namespace saba
         return observed[static_cast<unsigned>(dataType)];
       }
 
+      const MonoflopList& getMonoflopList()
+      {
+        return observedMonoflops;
+      }
+
       void addListObserver(ListObserver&& o)
       {
         listObserver.emplace_back(std::move(o));
@@ -208,7 +229,7 @@ namespace saba
       std::array<ObservableList, 3> observed;
       std::vector<ListObserver> listObserver;
 
-      std::vector<Observable3<bool,unsigned,unsigned>> observedMonoflops;
+      MonoflopList observedMonoflops;
       std::vector<MonoflopObserver> monoflopObserver;
     };
   }

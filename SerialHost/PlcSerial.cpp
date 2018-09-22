@@ -131,7 +131,7 @@ void PlcSerial::fireEvent(Event& event)
 {
   if (!initialized)
   {
-    send("E0\nO\nM\n", 7);
+    send("E0\nM\nO\n", 7);
     initialized = true;
   }
 

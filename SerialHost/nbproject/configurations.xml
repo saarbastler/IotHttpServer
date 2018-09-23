@@ -7,6 +7,7 @@
       <itemPath>HexUtils.h</itemPath>
       <itemPath>PlcConfig.h</itemPath>
       <itemPath>PlcEvent.h</itemPath>
+      <itemPath>PlcException.h</itemPath>
       <itemPath>PlcModel.h</itemPath>
       <itemPath>PlcRestController.h</itemPath>
       <itemPath>PlcSerial.h</itemPath>
@@ -80,6 +81,8 @@
       </item>
       <item path="PlcEvent.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="PlcException.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="PlcModel.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="PlcRestController.h" ex="false" tool="3" flavor2="0">
@@ -140,6 +143,8 @@
       <item path="PlcEvent.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="PlcEvent.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PlcException.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="PlcModel.h" ex="false" tool="3" flavor2="0">
       </item>

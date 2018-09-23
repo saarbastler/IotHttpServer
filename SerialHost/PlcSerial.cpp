@@ -140,8 +140,8 @@ void PlcSerial::fireEvent(Event& event)
   for (auto it : listener)
     it(event);
 
-  if( ValueEvent *valueEvent=dynamic_cast<ValueEvent*>(&event))
+  /*if( ValueEvent *valueEvent=dynamic_cast<ValueEvent*>(&event))
     if( valueEvent->getNum() == 7)
-      send("M0S\r\n", 5);
+      send("M0S\r\n", 5);*/
 
 }

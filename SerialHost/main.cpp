@@ -17,6 +17,23 @@
 
 #include <boost/asio.hpp>
 
+void toJson(std::string& json, saba::plc::DataType dataType, unsigned index, bool value)
+{
+  std::ostringstream out;
+  out << "{ \"type\":\"" << saba::plc::DataTypeNames[int(dataType)] << "\",\"index\":" << index << ",\"value\":" << (value ? "true" : "false") << "}";
+
+  out.str().swap(json);
+}
+
+void toJson(std::string& json, unsigned index, bool value, unsigned duration, unsigned remaining)
+{
+  std::ostringstream out;
+  out << "{ \"type\":\"monoflop\",\"index\":" << index << ",\"value\":" << (value ? "true" : "false")
+    << ",\"duration\":" << duration << ",\"remaining\":" << remaining << "}";
+
+  out.str().swap(json);
+}
+
 int main(int argc, char* argv[])
 {
   if (argc != 2)
@@ -74,20 +91,41 @@ int main(int argc, char* argv[])
       session.do_read();
     });
 
+    my_http_server.websockets()->registerCallback([&plcModel](http::websocket_session& websocket) 
+    {
+      const saba::plc::PlcModel::ObservableList& list = plcModel.getList(saba::plc::DataType::Outputs);
+      unsigned index = 0;
+      for(auto it : list)
+      {
+        std::string json;
+        toJson(json, saba::plc::DataType::Outputs, index++, it());
+        websocket.send(json);
+      }
+
+      const saba::plc::PlcModel::MonoflopList& mlist = plcModel.getMonoflopList();
+      index = 0;
+      for (auto it : mlist)
+      {
+        std::string json;
+        toJson(json, index++, it.getFirst(), it.getSecond(), it.getThird());
+        websocket.send(json);
+      }
+    });
+
     plcModel.addListObserver([&my_http_server](saba::plc::DataType dataType, unsigned index, bool value)
     {
-      std::ostringstream out;
-      out << "{ \"type\":\"" << saba::plc::DataTypeNames[int(dataType)] << "\",\"index\":" << index << ",\"value\":" << (value ? "true" : "false") << "}";
+      std::string json;
+      toJson(json, dataType, index, value);
 
-      my_http_server.websockets()->sendToAll(out.str());
+      my_http_server.websockets()->sendToAll(json);
     });
+
     plcModel.addMonoflopObserver([&my_http_server](unsigned index, bool value, unsigned duration, unsigned remaining)
     {
-      std::ostringstream out;
-      out << "{ \"type\":\"monoflop\",\"index\":" << index << ",\"value\":" << (value ? "true" : "false") 
-        << ",\"duration\":" << duration << ",\"remaining\":" << remaining << "}";
+      std::string json;
+      toJson(json, index, value, duration, remaining);
 
-      my_http_server.websockets()->sendToAll(out.str());
+      my_http_server.websockets()->sendToAll(json);
     });
 
 

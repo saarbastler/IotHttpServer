@@ -34,6 +34,17 @@ void toJson(std::string& json, unsigned index, bool value, unsigned duration, un
   out.str().swap(json);
 }
 
+void sendWebsocketObservable(http::websocket_session& websocket, saba::plc::DataType dataType, const saba::plc::PlcModel::ObservableList& list)
+{
+  unsigned index = 0;
+  for (auto it : list)
+  {
+    std::string json;
+    toJson(json, dataType, index++, it());
+    websocket.send(json);
+  }
+}
+
 int main(int argc, char* argv[])
 {
   if (argc != 2)
@@ -51,8 +62,7 @@ int main(int argc, char* argv[])
 
   try
   {
-    saba::plc::PlcModel plcModel;
-    SerialHost serialHost(plcModel, http::base::processor::get().io_service());
+    Process proc(http::base::processor::get().io_service());
     config.read(file, [&my_http_server, &config](const std::string& uri, const std::string& path, const std::string& defaultFile)
     {
       auto fileServer = std::make_shared<saba::web::FileServer>(path, defaultFile);
@@ -64,7 +74,8 @@ int main(int argc, char* argv[])
     });
         
 
-    Process proc(http::base::processor::get().io_service());
+    saba::plc::PlcModel plcModel;
+    SerialHost serialHost(plcModel, http::base::processor::get().io_service());
 
     serialHost.open(config.getSerialPort().c_str(), config.getSerialBaudrate());
 
@@ -93,17 +104,11 @@ int main(int argc, char* argv[])
 
     my_http_server.websockets()->registerCallback([&plcModel](http::websocket_session& websocket) 
     {
-      const saba::plc::PlcModel::ObservableList& list = plcModel.getList(saba::plc::DataType::Outputs);
-      unsigned index = 0;
-      for(auto it : list)
-      {
-        std::string json;
-        toJson(json, saba::plc::DataType::Outputs, index++, it());
-        websocket.send(json);
-      }
+      sendWebsocketObservable(websocket, saba::plc::DataType::Outputs, plcModel.getList(saba::plc::DataType::Outputs));
+      sendWebsocketObservable(websocket, saba::plc::DataType::Inputs, plcModel.getList(saba::plc::DataType::Inputs));
 
       const saba::plc::PlcModel::MonoflopList& mlist = plcModel.getMonoflopList();
-      index = 0;
+      unsigned index = 0;
       for (auto it : mlist)
       {
         std::string json;

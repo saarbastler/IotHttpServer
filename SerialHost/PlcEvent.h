@@ -4,7 +4,7 @@
 #include <string>
 #include <ostream>
 
-enum class EventType { Error, Input, Output, Monoflop, Merker };
+enum class EventType { Error, Input, Output, Monoflop, Merker, Status };
 
 std::ostream& operator << (std::ostream& out, EventType eventType);
 
@@ -108,5 +108,24 @@ public:
   }
 };
 
+class StatusEvent : public Event
+{
+private:
+  unsigned status;
+
+public:
+
+  StatusEvent(unsigned status) : Event(EventType::Status), status(status) {}
+
+  unsigned getStatus()
+  {
+    return status;
+  }
+
+  virtual void dump(std::ostream& out)
+  {
+    out << "Status: " << getStatus() << std::endl;
+  }
+};
 
 #endif // _INCLUDE_PLC_EVENT_H_

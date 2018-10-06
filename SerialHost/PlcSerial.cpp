@@ -64,6 +64,17 @@ void PlcSerial::lineComplete()
     }
     break;
 
+  case 'C':
+    if (isdigit(buffer[index]))
+    {
+      unsigned num = readNumber(index);
+
+      StatusEvent event(num);
+
+      fireEvent(event);
+      error = false;
+    }
+    break;
   }
 
   if (error)

@@ -20,7 +20,7 @@ private:
   bool comma = false;
 };
 
-std::ostream& operator << (std::ostream& out, Comma& comma)
+inline std::ostream& operator << (std::ostream& out, Comma& comma)
 {
   if (comma())
     out << ',';

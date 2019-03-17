@@ -14,33 +14,31 @@ namespace saba
   {
 
     template<class Request>
-    auto jsonResponse(Request& req, const std::string& jsonText, boost::beast::http::status status = boost::beast::http::status::ok)
+    auto response(Request& req, const std::string& contentType, const std::string& content, boost::beast::http::status status = boost::beast::http::status::ok)
     {
       boost::beast::http::response<boost::beast::http::string_body> res{ status, req.version() };
 
       res.set(boost::beast::http::field::server, BOOST_BEAST_VERSION_STRING);
-      res.set(boost::beast::http::field::content_type, "application/json");
+      res.set(boost::beast::http::field::content_type, contentType);
       res.set("Access-Control-Allow-Origin", "*");
       res.keep_alive(req.keep_alive());
-      res.body() = jsonText;
+      res.body() = content;
       res.prepare_payload();
 
       return res;
+    }
+
+    template<class Request>
+    auto jsonResponse(Request& req, const std::string& jsonText, boost::beast::http::status status = boost::beast::http::status::ok)
+    {
+      return response(req, "application/json", jsonText, status);
     }
 
 
     template<class Request>
     auto errorResponse(Request& req, const std::string& text, boost::beast::http::status status = boost::beast::http::status::internal_server_error)
     {
-      boost::beast::http::response<boost::beast::http::string_body> res{ status, req.version() };
-
-      res.set(boost::beast::http::field::server, BOOST_BEAST_VERSION_STRING);
-      res.set(boost::beast::http::field::content_type, "text/html");
-      res.keep_alive(req.keep_alive());
-      res.body() = text;
-      res.prepare_payload();
-
-      return res;
+      return response(req, "text/html", text, status);
     }
 
     template<class Request>
